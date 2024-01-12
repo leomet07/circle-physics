@@ -6,73 +6,72 @@ import numpy as np
 
 r = 1
 g = 9.806
-
-def calc_v(theta : float):
-    return math.sqrt(2 * g * r * (1 - math.cos(theta)))
-def calc_av(theta :float):
-    return calc_v(theta)/ (2 *pi * r)
-
 dt = 0.00001
-
 t=0
 theta = dt / 2
 
 iters = 0
 
-
 #draw vars
-cx = 250
-cy = 250
-cr = 150
+CENTER_CIRCLE_X = 250
+CENTER_CIRCLE_Y = 250
+CENTER_CIRCLE_R = 150
 
+
+class IceCube:
+    def __init__(self):
+        self.x = CENTER_CIRCLE_X+CENTER_CIRCLE_R
+        self.y = CENTER_CIRCLE_Y
+        self.r = 5
+        self.theta = 0
+    def display(self,img):
+        draw_circle(img,self.r,self.x,self.y)
+    def update(self,theta):
+        self.x = CENTER_CIRCLE_R*math.sin(theta) +CENTER_CIRCLE_X
+        self.y = -CENTER_CIRCLE_R*math.cos(theta)+CENTER_CIRCLE_Y
+    
+
+cube = IceCube()
+
+
+def calc_v(theta : float):
+    return math.sqrt(2 * g * r * (1 - math.cos(theta)))
+def calc_av(theta :float):
+    return calc_v(theta)/ (2 *pi * r)
 def draw_circle(frame, r, x, y):
     center_coordinates = (round(x), round(y)) 
-    
     # Blue color in BGR 
     color = (0, 255, 255) 
-    
     # Line thickness of 2 px 
     thickness = 2
-    
     # Using cv2.circle() method 
     # Draw a circle with blue line borders of thickness of 2 px 
     frame = cv2.circle(frame, center_coordinates, r, color, thickness) 
-
 def draw_time(frame, t):
     # font 
     font = cv2.FONT_HERSHEY_SIMPLEX 
-    
     # org 
     org = (50, 50) 
-    
     # fontScale 
     fontScale = 1
-    
     # Blue color in BGR 
     color = (0, 0, 255) 
-    
     # Line thickness of 2 px 
     thickness = 2
-    
     # Using cv2.putText() method 
     frame = cv2.putText(frame, str(t) , org, font,  
                     fontScale, color, thickness, cv2.LINE_AA) 
 
-def draw_axes(img,cx, cy):
-    cv2.line(img, (0, cy), (cx * 2, cy), (255, 0, 0), 1) 
-    cv2.line(img, (cx, 0), (cx, cy * 2), (255, 0, 0), 1) 
+def draw_axes(img,CENTER_CIRCLE_X, CENTER_CIRCLE_Y):
+    cv2.line(img, (0, CENTER_CIRCLE_Y), (CENTER_CIRCLE_X * 2, CENTER_CIRCLE_Y), (255, 0, 0), 1) 
+    cv2.line(img, (CENTER_CIRCLE_X, 0), (CENTER_CIRCLE_X, CENTER_CIRCLE_Y * 2), (255, 0, 0), 1) 
 
 def draw(img, theta):
-    draw_circle(img,cr,cx,cy)
+    draw_circle(img,CENTER_CIRCLE_R,CENTER_CIRCLE_X,CENTER_CIRCLE_Y)
     draw_time(img, t)
-
-    x = cr*math.sin(theta) +cx
-    y = -cr*math.cos(theta)+cy
-    
-    draw_circle(img,5, x, y)
-    draw_axes(img, cx, cy)
-    cv2.line(img, (cx, cy), (round(x), round(y)), (0, 255, 0), 1) 
-
+    draw_axes(img, CENTER_CIRCLE_X, CENTER_CIRCLE_Y)
+    cv2.line(img, (CENTER_CIRCLE_X, CENTER_CIRCLE_Y), (round(cube.x), round(cube.y)), (0, 255, 0), 1) 
+    cube.display(img)
 
     cv2.imshow("Frame:", img)
     
@@ -84,17 +83,16 @@ while theta <= math.acos(2 / 3):
     theta += ad # Apply Angular change over this very small interval (dt)
     t += dt
     iters += 1
-
+    cube.update(theta)
 
 
     if iters%1000 == 0:
         draw(img, theta)
         key = cv2.waitKey(1)
-
         if key == ord("q"):
             break
         
 draw(img, theta)
-
+key = cv2.waitKey(0)
 
 cv2.destroyAllWindows()
