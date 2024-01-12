@@ -22,6 +22,7 @@ class IceCube:
     def __init__(self):
         self.x = CENTER_CIRCLE_X+CENTER_CIRCLE_R
         self.y = CENTER_CIRCLE_Y
+        self.av = 0;
         self.r = 5
         self.theta = 0
     def display(self,img):
@@ -40,25 +41,15 @@ def calc_av(theta :float):
     return calc_v(theta)/ (2 *pi * r)
 def draw_circle(frame, r, x, y):
     center_coordinates = (round(x), round(y)) 
-    # Blue color in BGR 
     color = (0, 255, 255) 
-    # Line thickness of 2 px 
     thickness = 2
-    # Using cv2.circle() method 
-    # Draw a circle with blue line borders of thickness of 2 px 
     frame = cv2.circle(frame, center_coordinates, r, color, thickness) 
 def draw_time(frame, t):
-    # font 
     font = cv2.FONT_HERSHEY_SIMPLEX 
-    # org 
-    org = (50, 50) 
-    # fontScale 
+    org = (50, 50)
     fontScale = 1
-    # Blue color in BGR 
     color = (0, 0, 255) 
-    # Line thickness of 2 px 
     thickness = 2
-    # Using cv2.putText() method 
     frame = cv2.putText(frame, str(t) , org, font,  
                     fontScale, color, thickness, cv2.LINE_AA) 
 
